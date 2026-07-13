@@ -1,0 +1,9 @@
+{
+    "remote_user": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "workbench": {}
+        },
+        "remoteUser": "vscode"
+    }
+}

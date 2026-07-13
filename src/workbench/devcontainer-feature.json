@@ -1,0 +1,18 @@
+{
+    "name": "Workbench",
+    "id": "workbench",
+    "version": "1.0.0",
+    "description": "Installs Codex CLI, Claude Code, Pi, Worktrunk, Glow, fd, and ripgrep.",
+    "dependsOn": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": false,
+            "configureZshAsDefaultShell": false,
+            "installOhMyZsh": false,
+            "installOhMyZshConfig": false,
+            "upgradePackages": false
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        }
+    }
+}
