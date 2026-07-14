@@ -34,6 +34,6 @@ or agent configuration. Personal configuration remains the responsibility of
 your dotfiles. It depends on the official `common-utils` and `node` Features.
 
 When the container is opened in VS Code, the Feature also installs the official
-Codex extension (`OpenAI.chatgpt`) and VSCode Neovim
-(`asvetliakov.vscode-neovim`). VSCode Neovim runs in the workspace extension
-host so it uses the container's `nvim` and its remote-user configuration.
+Codex extension (`OpenAI.chatgpt`). Neovim is installed only as the `nvim`
+command for use in the container terminal; the Feature does not install a VS
+Code Neovim integration.
