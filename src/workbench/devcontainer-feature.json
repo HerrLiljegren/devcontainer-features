@@ -1,8 +1,23 @@
 {
     "name": "Workbench",
     "id": "workbench",
-    "version": "1.0.0",
-    "description": "Installs coding agents, Git tools, terminal utilities, Neovim, and Zsh.",
+    "version": "1.1.0",
+    "description": "Installs coding agents, Git tools, terminal utilities, Python, linters, Neovim, and Zsh.",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "asvetliakov.vscode-neovim",
+                "OpenAI.chatgpt"
+            ],
+            "settings": {
+                "remote.extensionKind": {
+                    "asvetliakov.vscode-neovim": [
+                        "workspace"
+                    ]
+                }
+            }
+        }
+    },
     "dependsOn": {
         "ghcr.io/devcontainers/features/common-utils:2": {
             "installZsh": false,

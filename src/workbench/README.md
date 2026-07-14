@@ -24,7 +24,16 @@ and Ubuntu-based Dev Containers on amd64 and arm64:
 | `fzf` | 0.74.0 |
 | `zoxide` | 0.10.0 |
 | `starship` | 1.26.0 |
+| `cc` | Distribution package (from `build-essential`) |
+| `python3` | Distribution package |
+| `yamllint` | Distribution package |
+| `shellcheck` | Distribution package |
 
 The Feature installs no credentials, shell initialization, login-shell changes,
 or agent configuration. Personal configuration remains the responsibility of
 your dotfiles. It depends on the official `common-utils` and `node` Features.
+
+When the container is opened in VS Code, the Feature also installs the official
+Codex extension (`OpenAI.chatgpt`) and VSCode Neovim
+(`asvetliakov.vscode-neovim`). VSCode Neovim runs in the workspace extension
+host so it uses the container's `nvim` and its remote-user configuration.

@@ -31,5 +31,11 @@ check_version gh "2.96.0"
 check_version fzf "0.74.0"
 check_version zoxide "0.10.0"
 check_version starship "1.26.0"
+check "cc is on PATH" bash -c "command -v cc"
+check_version python3 "Python 3."
+check "Python venv support is available" bash -c \
+    'venv_dir="$(mktemp -d)"; trap '\''rm -rf "$venv_dir"'\'' EXIT; python3 -m venv "$venv_dir/venv"; "$venv_dir/venv/bin/python" -m pip --version'
+check_version yamllint "yamllint "
+check_version shellcheck "version:"
 
 reportResults

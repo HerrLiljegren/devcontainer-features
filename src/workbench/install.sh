@@ -108,7 +108,17 @@ esac
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils zsh
+apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    curl \
+    python3 \
+    python3-venv \
+    shellcheck \
+    tar \
+    xz-utils \
+    yamllint \
+    zsh
 
 tmp_dir="$(mktemp -d /tmp/workbench-feature.XXXXXX)"
 cleanup() {

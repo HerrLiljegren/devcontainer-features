@@ -2,5 +2,6 @@
 
 This repository contains one Feature: [`workbench`](src/workbench).
 
-`workbench` installs Codex CLI, Claude Code, Pi, Worktrunk, Glow, fd, and
-ripgrep on Debian- and Ubuntu-based Dev Containers for amd64 and arm64.
+`workbench` installs coding agents, Git and terminal tools, Python, linters,
+and Neovim on Debian- and Ubuntu-based Dev Containers for amd64 and arm64. In
+VS Code it also installs the Codex and VSCode Neovim extensions.
