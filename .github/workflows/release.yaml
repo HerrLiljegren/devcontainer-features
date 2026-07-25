@@ -12,7 +12,7 @@ jobs:
         run: npm install -g @devcontainers/cli@0.87.0
 
       - name: "Test Workbench"
-        run: devcontainer features test -f workbench .
+        run: devcontainer features test --project-folder . -i mcr.microsoft.com/devcontainers/base:ubuntu -f workbench
 
   deploy:
     needs: test
