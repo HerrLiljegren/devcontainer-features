@@ -3,6 +3,11 @@ set -eu
 
 state_dir="${WORKBENCH_STATE_DIR:-/workbench-state}"
 
+if [ ! -w "$state_dir" ]; then
+    sudo chown -R "$(id -u):$(id -g)" "$state_dir"
+fi
+chmod 0700 "$state_dir"
+
 link_directory() {
     destination="$1"
     source="$2"
