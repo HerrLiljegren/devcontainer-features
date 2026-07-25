@@ -1,8 +1,8 @@
 # Dev Container Features
 
-This repository contains one Feature: [`workbench`](src/workbench).
+This repository publishes [`workbench`](src/workbench): an opinionated,
+terminal-only development environment with coding agents, Git tools, Neovim,
+Zsh, and pinned public dotfiles.
 
-`workbench` installs coding agents, Git and terminal tools, Python, linters,
-and Neovim on Debian- and Ubuntu-based Dev Containers for amd64 and arm64. In
-VS Code it also installs the Codex extension. Neovim remains available as the
-`nvim` command in the container terminal.
+Projects choose their own SDK versions and give Workbench one named state
+volume. Workbench installs no credentials and requires no editor integration.

@@ -3,39 +3,27 @@ set -e
 
 source dev-container-features-test-lib
 
-check_version() {
-    command_name="$1"
-    expected_version="$2"
-
-    check "$command_name is on PATH" bash -c "command -v '$command_name'"
-    check "$command_name has useful version output" bash -c \
-        "'$command_name' --version 2>&1 | grep -F '$expected_version'"
-}
-
-check_version codex "0.144.3"
-check_version claude "2.1.197"
-check_version pi "0.80.6"
-check_version hunk "0.17.0"
-check_version wt "0.67.0"
-check_version glow "2.1.2"
-check_version fd "10.4.2"
-check_version rg "15.1.0"
-check_version lazygit "0.63.0"
-check_version jq "jq-"
-check_version bat "0.26.1"
-check_version delta "0.19.2"
-check_version herdr "0.7.3"
-check_version nvim "0.12.4"
-check_version zsh "zsh 5."
-check_version gh "2.96.0"
-check_version fzf "0.74.0"
-check_version zoxide "0.10.0"
-check_version starship "1.26.0"
-check "cc is on PATH" bash -c "command -v cc"
-check_version python3 "Python 3."
-check "Python venv support is available" bash -c \
-    'venv_dir="$(mktemp -d)"; trap '\''rm -rf "$venv_dir"'\'' EXIT; python3 -m venv "$venv_dir/venv"; "$venv_dir/venv/bin/python" -m pip --version'
-check_version yamllint "yamllint "
-check_version shellcheck "version:"
+check "scenario runs as vscode" bash -c \
+    'test "$(id -un)" = vscode'
+check "Zsh is the login shell" bash -c \
+    'test "$(getent passwd "$(id -un)" | cut -d: -f7)" = /bin/zsh'
+check "Codex state is persistent" bash -c \
+    'test "$(readlink "$HOME/.codex")" = /workbench-state/codex'
+check "Claude state is persistent" bash -c \
+    'test "$(readlink "$HOME/.claude")" = /workbench-state/claude'
+check "OpenCode state is persistent" bash -c \
+    'test "$(readlink "$HOME/.local/share/opencode")" = /workbench-state/opencode'
+check "shell history is persistent" bash -c \
+    'test "$(readlink "$HOME/.zsh_history")" = /workbench-state/shell/zsh_history'
+check "NuGet credential provider is linked" bash -c \
+    'test -x "$HOME/.nuget/plugins/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft"'
+check "dotfiles configured Zsh" grep -Fq \
+    '# >>> dotfiles:zsh >>>' "$HOME/.zshrc"
+check "dotfiles configured Neovim" test -L \
+    "$HOME/.config/nvim"
+check "relative Git worktrees are enabled" bash -c \
+    'test "$(git config --global --get worktree.useRelativePaths)" = true'
+check "login Zsh loads the workbench" zsh -lic \
+    'command -v starship >/dev/null && command -v wt >/dev/null && command -v nvim >/dev/null'
 
 reportResults

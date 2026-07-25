@@ -4,6 +4,9 @@
         "features": {
             "workbench": {}
         },
+        "mounts": [
+            "source=workbench-feature-test-state,target=/workbench-state,type=volume"
+        ],
         "remoteUser": "vscode"
     }
 }
