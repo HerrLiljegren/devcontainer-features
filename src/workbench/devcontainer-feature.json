@@ -1,34 +1,34 @@
 {
-    "name": "Workbench",
-    "id": "workbench",
-    "version": "2.0.0",
-    "description": "An opinionated, terminal-only development workbench with coding agents, Git tools, Neovim, Zsh, and pinned dotfiles.",
-    "containerEnv": {
-        "WORKBENCH_STATE_DIR": "/workbench-state",
-        "CODEX_HOME": "/workbench-state/codex",
-        "CLAUDE_CONFIG_DIR": "/workbench-state/claude",
-        "GH_CONFIG_DIR": "/workbench-state/gh",
-        "NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED": "true",
-        "ARTIFACTS_CREDENTIALPROVIDER_MSAL_FILECACHE_LOCATION": "/workbench-state/azure-artifacts/msal.cache"
+  "name": "Workbench",
+  "id": "workbench",
+  "version": "2.0.1",
+  "description": "An opinionated, terminal-only development workbench with coding agents, Git tools, Neovim, Zsh, and pinned dotfiles.",
+  "containerEnv": {
+    "WORKBENCH_STATE_DIR": "/workbench-state",
+    "CODEX_HOME": "/workbench-state/codex",
+    "CLAUDE_CONFIG_DIR": "/workbench-state/claude",
+    "GH_CONFIG_DIR": "/workbench-state/gh",
+    "NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED": "true",
+    "ARTIFACTS_CREDENTIALPROVIDER_MSAL_FILECACHE_LOCATION": "/workbench-state/azure-artifacts/msal.cache"
+  },
+  "onCreateCommand": "/usr/local/bin/workbench-on-create",
+  "dependsOn": {
+    "ghcr.io/devcontainers/features/common-utils:2.5.9": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": false,
+      "installOhMyZshConfig": false,
+      "upgradePackages": false
     },
-    "onCreateCommand": "/usr/local/bin/workbench-on-create",
-    "dependsOn": {
-        "ghcr.io/devcontainers/features/common-utils:2.5.9": {
-            "installZsh": true,
-            "configureZshAsDefaultShell": true,
-            "installOhMyZsh": false,
-            "installOhMyZshConfig": false,
-            "upgradePackages": false
-        },
-        "ghcr.io/devcontainers/features/git:1.3.8": {
-            "version": "2.55.0",
-            "ppa": false
-        },
-        "ghcr.io/devcontainers/features/node:2.1.0": {
-            "version": "24.18.0",
-            "nodeGypDependencies": false,
-            "nvmVersion": "0.40.6",
-            "pnpmVersion": "none"
-        }
+    "ghcr.io/devcontainers/features/git:1.3.8": {
+      "version": "2.55.0",
+      "ppa": false
+    },
+    "ghcr.io/devcontainers/features/node:2.1.0": {
+      "version": "24.18.0",
+      "nodeGypDependencies": false,
+      "nvmVersion": "0.40.6",
+      "pnpmVersion": "none"
     }
+  }
 }
