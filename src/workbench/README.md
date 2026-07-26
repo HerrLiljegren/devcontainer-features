@@ -5,36 +5,29 @@ Ubuntu-based Dev Containers on amd64 and arm64.
 
 It installs:
 
-- Codex 0.144.3, Claude Code 2.1.197, OpenCode 1.18.5, and Hunk 0.17.0
-- Worktrunk 0.67.0, Git 2.55.0, GitHub CLI 2.96.0, Lazygit 0.63.0, and delta 0.19.2
+- Codex, Claude Code, OpenCode, and Hunk
+- Worktrunk, Git, GitHub CLI, Lazygit, and delta
 - Neovim 0.12.4 with pinned [HerrLiljegren/dotfiles](https://github.com/HerrLiljegren/dotfiles)
-- Zsh, Starship 1.26.0, fzf 0.74.0, zoxide 0.10.0, eza 0.23.5, bat 0.26.1
-- Python 3, ripgrep 15.1.0, fd 10.4.2, jq, yq 4.53.3, and ShellCheck
-- Azure DevOps MCP 2.8.1 and Azure Artifacts Credential Provider 2.0.2
+- Zsh, Starship, fzf, zoxide, eza, and bat
+- Python 3, ripgrep, fd, jq, yq, and ShellCheck
+- Azure DevOps MCP and Azure Artifacts Credential Provider
 
 It installs no credentials and has no dependency on VS Code.
 
 ## Updating the Workbench
 
-Use `scripts/workbench-release.sh` from the feature repository to preview or
-apply staged updates:
+From the Feature repository:
 
 ```sh
-scripts/workbench-release.sh update --level patch
-scripts/workbench-release.sh update --level minor --apply
-scripts/workbench-release.sh release --level patch --base 2.0 \
-  --apply --commit --tag --push --publish
+gh auth login -h github.com
+scripts/workbench-update.sh major
+scripts/workbench-update.sh major --apply
+git diff
 ```
 
-The helper updates supported npm and GitHub release pins, calculates both
-architecture checksums, advances the dotfiles commit and archive checksum, and
-can prepare the next `vX.Y.Z` Feature version. It is dry-run by default; commit,
-tag, push, and publish are explicit opt-in flags. A failed upstream metadata
-lookup stops the update rather than silently producing a partial toolbox
-update.
-
-The updater requires authenticated GitHub release metadata. On the host where
-you run it, use `gh auth login -h github.com` or provide `GITHUB_TOKEN`.
+The updater refreshes pins and checksums and increments the Feature patch
+version. Commit and push the result. After CI succeeds, publish it with
+`gh workflow run release.yaml --ref main`.
 
 ## Use it
 

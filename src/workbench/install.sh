@@ -267,6 +267,7 @@ download_and_verify \
 mkdir -p /opt/workbench/dotfiles
 tar -xzf "$tmp_dir/dotfiles.tar.gz" -C /opt/workbench/dotfiles --strip-components=1
 
+install -m 0644 "$feature_dir/versions.env" /opt/workbench/versions.env
 install -m 0755 "$feature_dir/on-create.sh" /usr/local/bin/workbench-on-create
 install -m 0755 "$feature_dir/azure-devops-mcp.sh" /usr/local/bin/workbench-azure-devops-mcp
 

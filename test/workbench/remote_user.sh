@@ -2,6 +2,51 @@
 set -e
 
 source dev-container-features-test-lib
+source /opt/workbench/versions.env
+
+check_version() {
+    command_name="$1"
+    expected_version="$2"
+
+    check "$command_name is on PATH" bash -c "command -v '$command_name'"
+    check "$command_name has expected version" bash -c \
+        "'$command_name' --version 2>&1 | grep -F '$expected_version'"
+}
+
+check_version codex "$CODEX_VERSION"
+check_version claude "${CLAUDE_VERSION%-*}"
+check_version hunk "$HUNK_VERSION"
+check_version opencode "$OPENCODE_VERSION"
+check_version wt "$WORKTRUNK_VERSION"
+check_version fd "$FD_VERSION"
+check_version rg "$RIPGREP_VERSION"
+check_version lazygit "$LAZYGIT_VERSION"
+check_version jq "jq-"
+check_version yq "$YQ_VERSION"
+check_version bat "$BAT_VERSION"
+check_version delta "$DELTA_VERSION"
+check_version eza "$EZA_VERSION"
+check_version nvim "$NVIM_VERSION"
+check_version zsh "zsh 5."
+check_version gh "$GH_VERSION"
+check_version fzf "$FZF_VERSION"
+check_version zoxide "$ZOXIDE_VERSION"
+check_version starship "$STARSHIP_VERSION"
+check_version git "2.55.0"
+check_version node "v24.18.0"
+check_version python3 "Python 3."
+check_version shellcheck "version:"
+
+check "Azure DevOps MCP is installed" bash -c \
+    "command -v mcp-server-azuredevops"
+check "Azure Artifacts credential provider is installed" test -x \
+    /opt/workbench/nuget/plugins/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft
+check "Python venv support is available" bash -c \
+    'venv_dir="$(mktemp -d)"; trap '\''rm -rf "$venv_dir"'\'' EXIT; python3 -m venv "$venv_dir/venv"; "$venv_dir/venv/bin/python" -m pip --version'
+check "dotfiles are pinned in the image" test -x \
+    /opt/workbench/dotfiles/install.sh
+check "removed commands are absent" bash -c \
+    '! command -v pi && ! command -v glow && ! command -v herdr && ! command -v yamllint'
 
 check "scenario runs as vscode" bash -c \
     'test "$(id -un)" = vscode'
@@ -15,6 +60,10 @@ check "OpenCode state is persistent" bash -c \
     'test "$(readlink "$HOME/.local/share/opencode")" = /workbench-state/opencode'
 check "shell history is persistent" bash -c \
     'test "$(readlink "$HOME/.zsh_history")" = /workbench-state/shell/zsh_history'
+check "bootstrap repairs remapped state ownership" bash -c \
+    'sudo chown -R root:root /workbench-state &&
+     /usr/local/bin/workbench-on-create &&
+     test -w /workbench-state'
 check "NuGet credential provider is linked" bash -c \
     'test -x "$HOME/.nuget/plugins/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft"'
 check "dotfiles configured Zsh" grep -Fq \

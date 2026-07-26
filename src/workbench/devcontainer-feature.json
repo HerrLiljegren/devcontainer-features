@@ -1,7 +1,7 @@
 {
   "name": "Workbench",
   "id": "workbench",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "An opinionated, terminal-only development workbench with coding agents, Git tools, Neovim, Zsh, and pinned dotfiles.",
   "containerEnv": {
     "WORKBENCH_STATE_DIR": "/workbench-state",
