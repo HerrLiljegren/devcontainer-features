@@ -1,0 +1,23 @@
+# name|kind|version variable|source-specific fields...
+codex|npm|CODEX_VERSION|@openai/codex
+azure-devops-mcp|npm|AZURE_DEVOPS_MCP_VERSION|@azure-devops/mcp
+hunk|npm|HUNK_VERSION|hunkdiff
+fd|github|FD_VERSION|sharkdp/fd|v|fd-musl_%s_amd64.deb|fd-musl_%s_arm64.deb|FD_SHA256_AMD64|FD_SHA256_ARM64
+worktrunk|github|WORKTRUNK_VERSION|max-sixty/worktrunk|v|worktrunk-x86_64-unknown-linux-musl.tar.xz|worktrunk-aarch64-unknown-linux-musl.tar.xz|WORKTRUNK_SHA256_AMD64|WORKTRUNK_SHA256_ARM64
+ripgrep|github|RIPGREP_VERSION|BurntSushi/ripgrep||ripgrep-%s-x86_64-unknown-linux-musl.tar.gz|ripgrep-%s-aarch64-unknown-linux-gnu.tar.gz|RIPGREP_SHA256_AMD64|RIPGREP_SHA256_ARM64
+lazygit|github|LAZYGIT_VERSION|jesseduffield/lazygit|v|lazygit_%s_linux_x86_64.tar.gz|lazygit_%s_linux_arm64.tar.gz|LAZYGIT_SHA256_AMD64|LAZYGIT_SHA256_ARM64
+bat|github|BAT_VERSION|sharkdp/bat|v|bat_%s_amd64.deb|bat_%s_arm64.deb|BAT_SHA256_AMD64|BAT_SHA256_ARM64
+delta|github|DELTA_VERSION|dandavison/delta||git-delta_%s_amd64.deb|git-delta_%s_arm64.deb|DELTA_SHA256_AMD64|DELTA_SHA256_ARM64
+neovim|github|NVIM_VERSION|neovim/neovim|v|nvim-linux-x86_64.tar.gz|nvim-linux-arm64.tar.gz|NVIM_SHA256_AMD64|NVIM_SHA256_ARM64
+gh|github|GH_VERSION|cli/cli|v|gh_%s_linux_amd64.deb|gh_%s_linux_arm64.deb|GH_SHA256_AMD64|GH_SHA256_ARM64
+fzf|github|FZF_VERSION|junegunn/fzf|v|fzf-%s-linux_amd64.tar.gz|fzf-%s-linux_arm64.tar.gz|FZF_SHA256_AMD64|FZF_SHA256_ARM64
+zoxide|github|ZOXIDE_VERSION|ajeetdsouza/zoxide|v|zoxide-%s-x86_64-unknown-linux-musl.tar.gz|zoxide-%s-aarch64-unknown-linux-musl.tar.gz|ZOXIDE_SHA256_AMD64|ZOXIDE_SHA256_ARM64
+starship|github|STARSHIP_VERSION|starship/starship|v|starship-x86_64-unknown-linux-musl.tar.gz|starship-aarch64-unknown-linux-musl.tar.gz|STARSHIP_SHA256_AMD64|STARSHIP_SHA256_ARM64
+opencode|github|OPENCODE_VERSION|anomalyco/opencode|v|opencode-linux-x64.tar.gz|opencode-linux-arm64.tar.gz|OPENCODE_SHA256_AMD64|OPENCODE_SHA256_ARM64
+eza|github|EZA_VERSION|eza-community/eza|v|eza_x86_64-unknown-linux-musl.tar.gz|eza_aarch64-unknown-linux-gnu.tar.gz|EZA_SHA256_AMD64|EZA_SHA256_ARM64
+yq|github|YQ_VERSION|mikefarah/yq|v|yq_linux_amd64|yq_linux_arm64|YQ_SHA256_AMD64|YQ_SHA256_ARM64
+artifacts-credential-provider|github|ARTIFACTS_CREDENTIAL_PROVIDER_VERSION|microsoft/artifacts-credprovider|v|Microsoft.linux-x64.NuGet.CredentialProvider.tar.gz|Microsoft.linux-arm64.NuGet.CredentialProvider.tar.gz|ARTIFACTS_CREDENTIAL_PROVIDER_SHA256_AMD64|ARTIFACTS_CREDENTIAL_PROVIDER_SHA256_ARM64
+claude|apt|CLAUDE_VERSION|downloads.claude.ai
+feature-common-utils|feature|common-utils|devcontainers/features
+feature-git|feature|git|devcontainers/features
+feature-node|feature|node|devcontainers/features

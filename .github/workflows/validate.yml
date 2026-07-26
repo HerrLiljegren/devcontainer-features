@@ -17,3 +17,10 @@ jobs:
         with:
           validate-only: "true"
           base-path-to-features: "./src"
+
+      - name: "Validate Workbench release tooling"
+        run: |
+          bash -n src/workbench/install.sh scripts/workbench-release.sh
+          jq empty src/workbench/devcontainer-feature.json
+          bash -eu -c '. src/workbench/versions.env; . src/workbench/checksums.env; test "${#DOTFILES_COMMIT}" -eq 40; test "${#DOTFILES_SHA256}" -eq 64'
+          scripts/workbench-release.sh check

@@ -14,6 +14,28 @@ It installs:
 
 It installs no credentials and has no dependency on VS Code.
 
+## Updating the Workbench
+
+Use `scripts/workbench-release.sh` from the feature repository to preview or
+apply staged updates:
+
+```sh
+scripts/workbench-release.sh update --level patch
+scripts/workbench-release.sh update --level minor --apply
+scripts/workbench-release.sh release --level patch --base 2.0 \
+  --apply --commit --tag --push --publish
+```
+
+The helper updates supported npm and GitHub release pins, calculates both
+architecture checksums, advances the dotfiles commit and archive checksum, and
+can prepare the next `vX.Y.Z` Feature version. It is dry-run by default; commit,
+tag, push, and publish are explicit opt-in flags. A failed upstream metadata
+lookup stops the update rather than silently producing a partial toolbox
+update.
+
+The updater requires authenticated GitHub release metadata. On the host where
+you run it, use `gh auth login -h github.com` or provide `GITHUB_TOKEN`.
+
 ## Use it
 
 Each repository needs a stable volume name. Use that same name in all of the
@@ -69,7 +91,7 @@ Use the tools' normal login commands after the container starts:
 codex login
 claude
 opencode
-gh auth login
+gh auth login -h github.com
 ```
 
 For private Azure Artifacts feeds:
