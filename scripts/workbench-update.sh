@@ -274,7 +274,10 @@ fi
 
 current_feature_version="$(jq -r .version "$metadata")"
 IFS=. read -r feature_major feature_minor feature_patch <<< "$current_feature_version"
-next_feature_version="$feature_major.$feature_minor.$((feature_patch + 1))"
+case "$level" in
+    major) next_feature_version="$feature_major.$((feature_minor + 1)).0" ;;
+    patch|minor) next_feature_version="$feature_major.$feature_minor.$((feature_patch + 1))" ;;
+esac
 show_change feature-version "$current_feature_version" "$next_feature_version"
 temp="$(mktemp)"
 jq --arg version "$next_feature_version" '.version = $version' "$metadata" > "$temp"
