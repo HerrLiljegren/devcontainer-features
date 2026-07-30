@@ -18,16 +18,15 @@ It installs no credentials and has no dependency on VS Code.
 
 From the Feature repository:
 
-```sh
-gh auth login -h github.com
-scripts/workbench-update.sh major
-scripts/workbench-update.sh major --apply
-git diff
+```text
+$release-workbench patch
+$release-workbench minor
+$release-workbench major
 ```
 
-The updater refreshes pins and checksums and increments the Feature patch
-version. Commit and push the result. After CI succeeds, publish it with
-`gh workflow run release.yaml --ref main`.
+The repository-local skill refreshes pins and checksums, validates the Feature,
+creates the approved release commit, waits for CI, and publishes the exact
+commit through GitHub Actions.
 
 ## Use it
 

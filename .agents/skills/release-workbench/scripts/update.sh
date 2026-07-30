@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+script_dir="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="${WORKBENCH_REPO_ROOT:-$(git -C "$script_dir" rev-parse --show-toplevel)}"
+# shellcheck source=lib.sh
+. "$script_dir/lib.sh"
 feature_dir="$repo_root/src/workbench"
 source_versions="$feature_dir/versions.env"
 source_checksums="$feature_dir/checksums.env"
@@ -23,7 +26,7 @@ cp "$source_metadata" "$metadata"
 . "$checksums"
 
 usage() {
-    printf 'Usage: scripts/workbench-update.sh patch|minor|major [--apply]\n'
+    printf 'Usage: %s patch|minor|major [--apply]\n' "${0##*/}"
 }
 
 die() {
@@ -49,47 +52,6 @@ for command_name in curl gh git jq npm sha256sum; do
 done
 gh auth status -h github.com >/dev/null 2>&1 \
     || die "GitHub CLI is not authenticated; run 'gh auth login -h github.com'"
-
-version_key() {
-    local value="${1#v}"
-    value="${value%%-*}"
-    [[ "$value" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || return 1
-    printf '%s\n' "$value"
-}
-
-version_gt() {
-    [[ "$1" != "$2" && "$(printf '%s\n%s\n' "$1" "$2" | sort -V | tail -n1)" == "$1" ]]
-}
-
-eligible_version() {
-    local current candidate current_major current_minor candidate_major candidate_minor
-    current="$(version_key "$1")" || return 1
-    candidate="$(version_key "$2")" || return 1
-    current_major="${current%%.*}"
-    current_minor="${current#*.}"; current_minor="${current_minor%%.*}"
-    candidate_major="${candidate%%.*}"
-    candidate_minor="${candidate#*.}"; candidate_minor="${candidate_minor%%.*}"
-    version_gt "$candidate" "$current" || return 1
-
-    case "$3" in
-        patch) [[ "$candidate_major" == "$current_major" && "$candidate_minor" == "$current_minor" ]] ;;
-        minor) [[ "$candidate_major" == "$current_major" ]] ;;
-        major) return 0 ;;
-    esac
-}
-
-select_best() {
-    local current="$1" update_level="$2" candidates="$3" candidate best=""
-    while IFS= read -r candidate; do
-        [[ -n "$candidate" ]] || continue
-        if eligible_version "$current" "$candidate" "$update_level"; then
-            if [[ -z "$best" ]] || version_gt "$(version_key "$candidate")" "$(version_key "$best")"; then
-                best="$candidate"
-            fi
-        fi
-    done <<< "$candidates"
-    [[ -n "$best" ]] && printf '%s\n' "$best"
-}
 
 pin_value() {
     local name="$1"
@@ -142,20 +104,20 @@ latest_github() {
 }
 
 update_dotfiles() {
-    local commit sha current
-    commit="$(gh api repos/HerrLiljegren/dotfiles/commits/main --jq .sha)"
+    local variable="$1" repository="$2" checksum="$3" commit sha current
+    commit="$(gh api "repos/$repository/commits/main" --jq .sha)"
     [[ "$commit" =~ ^[0-9a-f]{40}$ ]] || die "could not resolve dotfiles main"
-    sha="$(download_sha256 "https://github.com/HerrLiljegren/dotfiles/archive/$commit.tar.gz")"
+    sha="$(download_sha256 "https://github.com/$repository/archive/$commit.tar.gz")"
 
-    current="$(pin_value DOTFILES_COMMIT)"
+    current="$(pin_value "$variable")"
     if [[ "$commit" != "$current" ]]; then
-        show_change DOTFILES_COMMIT "$current" "$commit"
-        set_pin "$versions" DOTFILES_COMMIT "$commit"
+        show_change "$variable" "$current" "$commit"
+        set_pin "$versions" "$variable" "$commit"
     fi
-    current="$(pin_value DOTFILES_SHA256)"
+    current="$(pin_value "$checksum")"
     if [[ "$sha" != "$current" ]]; then
-        show_change DOTFILES_SHA256 "$current" "$sha"
-        set_pin "$versions" DOTFILES_SHA256 "$sha"
+        show_change "$checksum" "$current" "$sha"
+        set_pin "$versions" "$checksum" "$sha"
     fi
 }
 
@@ -201,23 +163,24 @@ latest_claude() {
 }
 
 update_claude() {
+    local variable="$1" amd64_checksum="$2" arm64_checksum="$3"
     local current next asset sha
-    current="$(pin_value CLAUDE_VERSION)"
+    current="$(pin_value "$variable")"
     next="$(select_best "$current" "$level" "$(latest_claude)" || true)"
     [[ -n "$next" ]] || return 0
 
     show_change claude "$current" "$next"
-    set_pin "$versions" CLAUDE_VERSION "$next"
+    set_pin "$versions" "$variable" "$next"
 
     asset="claude-code_${next}_amd64.deb"
     sha="$(download_sha256 "https://downloads.claude.ai/claude-code/apt/stable/pool/main/c/claude-code/$asset")"
-    show_change CLAUDE_SHA256_AMD64 "$(pin_value CLAUDE_SHA256_AMD64)" "$sha"
-    set_pin "$checksums" CLAUDE_SHA256_AMD64 "$sha"
+    show_change "$amd64_checksum" "$(pin_value "$amd64_checksum")" "$sha"
+    set_pin "$checksums" "$amd64_checksum" "$sha"
 
     asset="claude-code_${next}_arm64.deb"
     sha="$(download_sha256 "https://downloads.claude.ai/claude-code/apt/stable/pool/main/c/claude-code/$asset")"
-    show_change CLAUDE_SHA256_ARM64 "$(pin_value CLAUDE_SHA256_ARM64)" "$sha"
-    set_pin "$checksums" CLAUDE_SHA256_ARM64 "$sha"
+    show_change "$arm64_checksum" "$(pin_value "$arm64_checksum")" "$sha"
+    set_pin "$checksums" "$arm64_checksum" "$sha"
 }
 
 latest_feature() {
@@ -252,15 +215,15 @@ update_feature() {
 }
 
 printf 'Workbench update (%s, %s)\n' "$level" "$([[ $apply -eq 1 ]] && printf apply || printf preview)"
-update_dotfiles
 
 while IFS='|' read -r name kind variable source prefix amd64_asset arm64_asset amd64_checksum arm64_checksum; do
     [[ -z "$name" || "$name" == \#* ]] && continue
     case "$kind" in
         npm) update_npm "$name" "$variable" "$source" ;;
         github) update_github "$name" "$variable" "$source" "$prefix" "$amd64_asset" "$arm64_asset" "$amd64_checksum" "$arm64_checksum" ;;
-        apt) update_claude ;;
+        apt) update_claude "$variable" "$amd64_checksum" "$arm64_checksum" ;;
         feature) update_feature "$variable" ;;
+        git) update_dotfiles "$variable" "$source" "$amd64_checksum" ;;
         *) die "unknown update source '$kind' for '$name'" ;;
     esac
 done < "$manifest"
@@ -273,14 +236,10 @@ if cmp -s "$source_versions" "$versions" \
 fi
 
 current_feature_version="$(jq -r .version "$metadata")"
-IFS=. read -r feature_major feature_minor feature_patch <<< "$current_feature_version"
-case "$level" in
-    major) next_feature_version="$feature_major.$((feature_minor + 1)).0" ;;
-    patch|minor) next_feature_version="$feature_major.$feature_minor.$((feature_patch + 1))" ;;
-esac
-show_change feature-version "$current_feature_version" "$next_feature_version"
+new_feature_version="$(next_feature_version "$current_feature_version" "$level")"
+show_change feature-version "$current_feature_version" "$new_feature_version"
 temp="$(mktemp)"
-jq --arg version "$next_feature_version" '.version = $version' "$metadata" > "$temp"
+jq --arg version "$new_feature_version" '.version = $version' "$metadata" > "$temp"
 mv "$temp" "$metadata"
 
 if (( apply )); then

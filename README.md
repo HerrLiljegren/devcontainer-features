@@ -10,29 +10,24 @@ volume. Workbench installs no credentials and requires no editor integration.
 ## Update and release
 
 Workbench pins its external tools in `src/workbench/versions.env` and
-`src/workbench/checksums.env`. Authenticate GitHub CLI once, then preview or
-apply an update:
+`src/workbench/checksums.env`. Releases are prepared and published with the
+repository-local, user-invoked skill:
 
-```sh
-gh auth login -h github.com
-scripts/workbench-update.sh major
-scripts/workbench-update.sh major --apply
+```text
+$release-workbench patch
+$release-workbench minor
+$release-workbench major
 ```
 
 `patch` stays within the current major/minor line, `minor` stays within the
-current major line, and `major` allows stable major upgrades. The default is a
-preview. Applying a `patch` or `minor` update increments the Workbench patch
-version. Applying a `major` dependency update increments the Workbench minor
-version and resets its patch version. Workbench major versions are reserved for
-intentional breaking or structural changes to the Feature itself.
+current major line, and `major` allows stable major upgrades. Patch and minor
+dependency releases increment the Workbench patch version. Major dependency
+releases increment the Workbench minor version and reset its patch version.
+Workbench major versions are reserved for intentional breaking or structural
+changes to the Feature itself.
 
-Review, commit, and push the change. After CI succeeds, publish the current
-`main` branch:
-
-```sh
-gh workflow run release.yaml --ref main
-```
-
-The release workflow only publishes the Feature and its metadata-derived
-major, minor, and exact-version aliases. CI owns validation and container
-builds.
+The skill previews and validates every update, asks once for approval, creates
+the atomic release commit, waits for push CI, and dispatches the release
+workflow for that exact version and commit. GitHub Actions publishes the
+Feature's major, minor, and exact-version aliases before creating a `vX.Y.Z`
+GitHub Release with generated notes. Exact releases are immutable.

@@ -1,4 +1,5 @@
 # name|kind|version variable|source-specific fields...
+dotfiles|git|DOTFILES_COMMIT|HerrLiljegren/dotfiles||||DOTFILES_SHA256|
 codex|npm|CODEX_VERSION|@openai/codex
 azure-devops-mcp|npm|AZURE_DEVOPS_MCP_VERSION|@azure-devops/mcp
 hunk|npm|HUNK_VERSION|hunkdiff
@@ -17,7 +18,7 @@ opencode|github|OPENCODE_VERSION|anomalyco/opencode|v|opencode-linux-x64.tar.gz|
 eza|github|EZA_VERSION|eza-community/eza|v|eza_x86_64-unknown-linux-musl.tar.gz|eza_aarch64-unknown-linux-gnu.tar.gz|EZA_SHA256_AMD64|EZA_SHA256_ARM64
 yq|github|YQ_VERSION|mikefarah/yq|v|yq_linux_amd64|yq_linux_arm64|YQ_SHA256_AMD64|YQ_SHA256_ARM64
 artifacts-credential-provider|github|ARTIFACTS_CREDENTIAL_PROVIDER_VERSION|microsoft/artifacts-credprovider|v|Microsoft.linux-x64.NuGet.CredentialProvider.tar.gz|Microsoft.linux-arm64.NuGet.CredentialProvider.tar.gz|ARTIFACTS_CREDENTIAL_PROVIDER_SHA256_AMD64|ARTIFACTS_CREDENTIAL_PROVIDER_SHA256_ARM64
-claude|apt|CLAUDE_VERSION|downloads.claude.ai
+claude|apt|CLAUDE_VERSION|downloads.claude.ai||||CLAUDE_SHA256_AMD64|CLAUDE_SHA256_ARM64
 feature-common-utils|feature|common-utils|devcontainers/features
 feature-git|feature|git|devcontainers/features
 feature-node|feature|node|devcontainers/features

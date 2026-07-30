@@ -1,13 +1,57 @@
 name: "Release Workbench Feature"
 on:
   workflow_dispatch:
+    inputs:
+      expected_version:
+        description: "Approved Workbench version"
+        required: true
+        type: string
+      expected_sha:
+        description: "Approved release commit"
+        required: true
+        type: string
 
 jobs:
-  deploy:
-    if: ${{ github.ref == 'refs/heads/main' }}
+  preflight:
+    name: "Preflight"
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      actions: read
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Verify approved release"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/main
+          test "$GITHUB_SHA" = "$EXPECTED_SHA"
+          test "$(jq -r .version src/workbench/devcontainer-feature.json)" = "$EXPECTED_VERSION"
+
+          state="$(
+            .agents/skills/release-workbench/scripts/release-state.sh \
+              "$EXPECTED_VERSION" \
+              "$EXPECTED_SHA"
+          )"
+          jq -e '
+            .tag.sha == null
+            and .release.exists == false
+            and .package.exact.digest == null
+          ' <<< "$state" >/dev/null
+
+  publish:
+    name: "Publish"
+    needs: preflight
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
@@ -17,5 +61,80 @@ jobs:
         with:
           publish-features: "true"
           base-path-to-features: "./src"
+          disable-repo-tagging: "true"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    name: "Release"
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Create GitHub Release"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        run: |
+          set -euo pipefail
+          tag="v${EXPECTED_VERSION}"
+          previous_tag="$(
+            git tag --list 'v*' --sort=-version:refname \
+              | awk -v tag="$tag" '$0 != tag { print; exit }'
+          )"
+          test -n "$previous_tag"
+
+          notes="$RUNNER_TEMP/release-notes.md"
+          .agents/skills/release-workbench/scripts/release-notes.sh \
+            "$previous_tag" \
+            "$EXPECTED_SHA" \
+            > "$notes"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            tag_sha="$(
+              git ls-remote origin "refs/tags/$tag" \
+                | awk 'NR == 1 { print $1 }'
+            )"
+            test "$tag_sha" = "$EXPECTED_SHA"
+          else
+            gh release create "$tag" \
+              --target "$EXPECTED_SHA" \
+              --title "Workbench $tag" \
+              --notes-file "$notes" \
+              --generate-notes \
+              --latest
+          fi
+
+      - name: "Verify publication"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6; do
+            state="$(
+              .agents/skills/release-workbench/scripts/release-state.sh \
+                "$EXPECTED_VERSION" \
+                "$EXPECTED_SHA"
+            )"
+            if jq -e '
+              .classification == "complete"
+              and .package.exact.digest == .package.minor.digest
+              and .package.exact.digest == .package.major.digest
+            ' <<< "$state" >/dev/null; then
+              exit 0
+            fi
+            sleep 5
+          done
+
+          jq . <<< "$state"
+          exit 1

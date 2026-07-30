@@ -20,10 +20,19 @@ jobs:
 
       - name: "Validate Workbench files"
         run: |
-          bash -n scripts/workbench-update.sh test/workbench/remote_user.sh
+          bash -n \
+            .agents/skills/release-workbench/scripts/lib.sh \
+            .agents/skills/release-workbench/scripts/update.sh \
+            .agents/skills/release-workbench/scripts/release-notes.sh \
+            .agents/skills/release-workbench/scripts/release-state.sh \
+            .agents/skills/release-workbench/test/run.sh \
+            test/workbench/remote_user.sh
           sh -n src/workbench/install.sh src/workbench/on-create.sh src/workbench/azure-devops-mcp.sh
           jq empty src/workbench/devcontainer-feature.json test/workbench/scenarios.json
           bash -eu -c '. src/workbench/versions.env; . src/workbench/checksums.env; test "${#DOTFILES_COMMIT}" -eq 40; test "${#DOTFILES_SHA256}" -eq 64'
+
+      - name: "Test release mechanics"
+        run: .agents/skills/release-workbench/test/run.sh
 
       - name: "Install devcontainer CLI"
         run: npm install -g @devcontainers/cli@0.87.0
