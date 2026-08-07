@@ -21,6 +21,24 @@ link_directory() {
     ln -sfn "$source" "$destination"
 }
 
+link_workbench_skill() {
+    skill_name="$1"
+    source="/opt/workbench/skills/mattpocock/$skill_name"
+    destination="$state_dir/codex/skills/$skill_name"
+
+    if [ -e "$destination" ] && [ ! -L "$destination" ]; then
+        echo "workbench: refusing to replace user skill $destination" >&2
+        exit 1
+    fi
+
+    if [ -L "$destination" ] && [ "$(readlink "$destination")" != "$source" ]; then
+        echo "workbench: refusing to replace user skill link $destination" >&2
+        exit 1
+    fi
+
+    ln -sfn "$source" "$destination"
+}
+
 umask 077
 mkdir -p \
     "$state_dir/azure-artifacts/MicrosoftCredentialProvider" \
@@ -32,6 +50,31 @@ mkdir -p \
     "$state_dir/shell"
 
 link_directory "$HOME/.codex" "$state_dir/codex"
+mkdir -p "$state_dir/codex/skills"
+for skill_name in \
+    code-review \
+    codebase-design \
+    diagnosing-bugs \
+    domain-modeling \
+    grill-me \
+    grill-with-docs \
+    grilling \
+    handoff \
+    implement \
+    improve-codebase-architecture \
+    prototype \
+    research \
+    resolving-merge-conflicts \
+    tdd \
+    to-spec \
+    to-tickets \
+    triage \
+    wayfinder \
+    wizard \
+    writing-for-agents
+do
+    link_workbench_skill "$skill_name"
+done
 link_directory "$HOME/.claude" "$state_dir/claude"
 link_directory "$HOME/.local/share/opencode" "$state_dir/opencode"
 link_directory \

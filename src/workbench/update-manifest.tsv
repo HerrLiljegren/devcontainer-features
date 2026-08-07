@@ -1,5 +1,6 @@
 # name|kind|version variable|source-specific fields...
 dotfiles|git|DOTFILES_COMMIT|HerrLiljegren/dotfiles||||DOTFILES_SHA256|
+matt-pocock-skills|git|MATT_POCOCK_SKILLS_COMMIT|mattpocock/skills||||MATT_POCOCK_SKILLS_SHA256|
 codex|npm|CODEX_VERSION|@openai/codex
 azure-devops-mcp|npm|AZURE_DEVOPS_MCP_VERSION|@azure-devops/mcp
 hunk|npm|HUNK_VERSION|hunkdiff

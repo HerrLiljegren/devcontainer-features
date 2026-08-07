@@ -267,6 +267,39 @@ download_and_verify \
 mkdir -p /opt/workbench/dotfiles
 tar -xzf "$tmp_dir/dotfiles.tar.gz" -C /opt/workbench/dotfiles --strip-components=1
 
+echo "Installing curated Matt Pocock skills $MATT_POCOCK_SKILLS_COMMIT..."
+download_and_verify \
+    "https://github.com/mattpocock/skills/archive/${MATT_POCOCK_SKILLS_COMMIT}.tar.gz" \
+    "$MATT_POCOCK_SKILLS_SHA256" "$tmp_dir/matt-pocock-skills.tar.gz"
+mkdir -p "$tmp_dir/matt-pocock-skills" /opt/workbench/skills/mattpocock
+tar -xzf "$tmp_dir/matt-pocock-skills.tar.gz" -C "$tmp_dir/matt-pocock-skills"
+for skill in \
+    engineering/code-review \
+    engineering/codebase-design \
+    engineering/diagnosing-bugs \
+    engineering/domain-modeling \
+    engineering/grill-with-docs \
+    engineering/implement \
+    engineering/improve-codebase-architecture \
+    engineering/prototype \
+    engineering/research \
+    engineering/resolving-merge-conflicts \
+    engineering/tdd \
+    engineering/to-spec \
+    engineering/to-tickets \
+    engineering/triage \
+    engineering/wayfinder \
+    engineering/wizard \
+    productivity/grill-me \
+    productivity/grilling \
+    productivity/handoff \
+    productivity/writing-for-agents
+do
+    cp -a \
+        "$tmp_dir/matt-pocock-skills/skills-$MATT_POCOCK_SKILLS_COMMIT/skills/$skill" \
+        "/opt/workbench/skills/mattpocock/${skill##*/}"
+done
+
 install -m 0644 "$feature_dir/versions.env" /opt/workbench/versions.env
 install -m 0755 "$feature_dir/on-create.sh" /usr/local/bin/workbench-on-create
 install -m 0755 "$feature_dir/azure-devops-mcp.sh" /usr/local/bin/workbench-azure-devops-mcp

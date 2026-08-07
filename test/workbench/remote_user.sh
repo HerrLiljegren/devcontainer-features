@@ -54,6 +54,10 @@ check "Zsh is the login shell" bash -c \
     'test "$(getent passwd "$(id -un)" | cut -d: -f7)" = /bin/zsh'
 check "Codex state is persistent" bash -c \
     'test "$(readlink "$HOME/.codex")" = /workbench-state/codex'
+check "curated Matt Pocock skills are available to Codex" bash -c \
+    'for skill in code-review codebase-design diagnosing-bugs domain-modeling grill-me grill-with-docs grilling handoff implement improve-codebase-architecture prototype research resolving-merge-conflicts tdd to-spec to-tickets triage wayfinder wizard writing-for-agents; do
+        test "$(readlink "$CODEX_HOME/skills/$skill")" = "/opt/workbench/skills/mattpocock/$skill" || exit 1
+    done'
 check "Claude state is persistent" bash -c \
     'test "$(readlink "$HOME/.claude")" = /workbench-state/claude'
 check "OpenCode state is persistent" bash -c \

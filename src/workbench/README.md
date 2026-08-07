@@ -6,6 +6,8 @@ Ubuntu-based Dev Containers on amd64 and arm64.
 It installs:
 
 - Codex, Claude Code, OpenCode, and Hunk
+- Curated Matt Pocock skills for Codex: implementation, planning, triage,
+  reviews, research, design, debugging, and handoffs
 - Worktrunk, Git, GitHub CLI, Lazygit, and delta
 - Neovim 0.12.4 with pinned [HerrLiljegren/dotfiles](https://github.com/HerrLiljegren/dotfiles)
 - Zsh, Starship, fzf, zoxide, eza, and bat
@@ -74,6 +76,20 @@ The named volume stores only selected user state:
 Binaries, SDKs, editor plugins, package caches, and the rest of the home
 directory are recreated. Delete the named volume to reset all Workbench
 authentication for that repository.
+
+## Curated Codex skills
+
+Workbench pins these image-owned skills from
+[mattpocock/skills](https://github.com/mattpocock/skills): `implement`,
+`to-spec`, `to-tickets`, `tdd`, `diagnosing-bugs`, `code-review`,
+`codebase-design`, `domain-modeling`, `research`, `prototype`,
+`resolving-merge-conflicts`, `wizard`, `grilling`, `writing-for-agents`,
+`grill-with-docs`, `improve-codebase-architecture`, `wayfinder`, `triage`,
+`grill-me`, and `handoff`.
+
+They are available through Codex's normal skills discovery. The Feature owns
+their pinned source; Codex state holds only links. A user-owned skill with the
+same name is not overwritten during bootstrap.
 
 ## Authenticate
 
