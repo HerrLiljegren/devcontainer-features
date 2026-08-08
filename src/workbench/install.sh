@@ -163,6 +163,13 @@ npm install --global --prefix /usr/local --ignore-scripts --no-audit --no-fund \
     "@azure-devops/mcp@$AZURE_DEVOPS_MCP_VERSION" \
     "hunkdiff@$HUNK_VERSION"
 
+hunk_native="/usr/local/lib/node_modules/hunkdiff/node_modules/hunkdiff-linux-${opencode_arch}/bin/hunk"
+if [ ! -f "$hunk_native" ]; then
+    echo "Hunk native binary was not installed at '$hunk_native'." >&2
+    exit 1
+fi
+chmod 0755 "$hunk_native"
+
 worktrunk_asset="worktrunk-${worktrunk_target}.tar.xz"
 echo "Installing Worktrunk $WORKTRUNK_VERSION..."
 download_and_verify \
